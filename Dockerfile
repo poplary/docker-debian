@@ -35,7 +35,7 @@ ARG NGINX_VERSION="1.16.1"
 ARG REDIS_VERSION="5.0.5"
 ARG MYSQL_VERSION="8.0.17"
 ARG PHP_REDIS_VERSION="5.0.2"
-ARG SWOOLE_VERSION="v4.4.4"
+ARG SWOOLE_VERSION="4.4.4"
 
 # 下载并解压
 RUN wget https://nchc.dl.sourceforge.net/project/freetype/freetype2/${FREETYPE_VERSION}/freetype-${FREETYPE_VERSION}.tar.gz \
@@ -63,9 +63,9 @@ RUN wget https://nchc.dl.sourceforge.net/project/freetype/freetype2/${FREETYPE_V
     -O /workspace/src/phpredis-${PHP_REDIS_VERSION}.tar.gz && \
     tar xzvf /workspace/src/phpredis-${PHP_REDIS_VERSION}.tar.gz -C /workspace/src && \
     # 下载解压 swoole
-    wget https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz \
-    -O /workspace/src/swoole-${SWOOLE_VERSION}.tar.gz && \
-    tar xzvf /workspace/src/swoole-${SWOOLE_VERSION}.tar.gz -C /workspace/src
+    wget https://github.com/swoole/swoole-src/archive/v${SWOOLE_VERSION}.tar.gz \
+    -O /workspace/src/swoole-v${SWOOLE_VERSION}.tar.gz && \
+    tar xzvf /workspace/src/swoole-v${SWOOLE_VERSION}.tar.gz -C /workspace/src
 
 # 安装 freetype
 RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
@@ -160,7 +160,7 @@ RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
     ./configure \
     && make && make install && \
     # 安装 swoole
-    cd /workspace/src/swoole-${SWOOLE_VERSION} && \
+    cd /workspace/src/swoole-src-${SWOOLE_VERSION} && \
     /usr/local/bin/phpize && \
     ./configure --enable-openssl --enable-sockets --enable-http2 --enable-mysqlnd && \
     make && make install && \
