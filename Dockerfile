@@ -1,7 +1,5 @@
 FROM debian:buster
 
-COPY ./sources.list /etc/apt/sources.list
-
 # 时区设置
 ARG TIMEZONE="Asia/Shanghai"
 # COPY ./sources.list /etc/apt/sources.list
