@@ -64,7 +64,7 @@ RUN wget https://nchc.dl.sourceforge.net/project/freetype/freetype2/${FREETYPE_V
     -O /workspace/src/phpredis-${PHP_REDIS_VERSION}.tar.gz && \
     tar xzvf /workspace/src/phpredis-${PHP_REDIS_VERSION}.tar.gz -C /workspace/src && \
     # 下载解压 swoole
-    wget https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.gz \
+    wget https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.tar.gz \
     -O /workspace/src/swoole-${SWOOLE_VERSION}.tar.gz && \
     tar xzvf /workspace/src/swoole-${SWOOLE_VERSION}.tar.gz -C /workspace/src
 
