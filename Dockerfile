@@ -156,12 +156,12 @@ RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
     /bin/ln -s /workspace/app/mysql/bin/mysqldump /usr/local/bin && \
     # 安装 phpredis
     cd /workspace/src/phpredis-${PHP_REDIS_VERSION} && \
-    /usr/bin/phpize && \
+    /usr/local/bin/phpize && \
     ./configure \
     && make && make install && \
     # 安装 swoole
     cd /workspace/src/swoole-${SWOOLE_VERSION} && \
-    /usr/bin/phpize && \
+    /usr/local/bin/phpize && \
     ./configure --enable-openssl --enable-sockets --enable-http2 --enable-mysqlnd && \
     make && make install && \
     # 删除所有源文件
