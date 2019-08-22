@@ -7,9 +7,9 @@ RUN rm -rf /etc/localtime && \
     ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && \
     echo ${TIMEZONE} > /etc/timezone && \
     # 创建相关的目录
-    mkdir -p /workspace/app /workspace/etc/php/conf.d /workspace/etc/nginx /workspace/etc/mysql /workspace/etc/redis \
-    /workspace/data/mysql /workspace/data/redis /workspace/src /workspace/log/php /workspace/log/nginx \
-    /workspace/log/mysql /workspace/log/redis /workspace/run /workspace/run/mysql /workspace/www && \
+    mkdir -p /workspace/app /workspace/etc /workspace/data/mysql /workspace/data/redis /workspace/src /workspace/www \
+    /workspace/log/php /workspace/log/nginx /workspace/log/mysql /workspace/log/redis /workspace/run/mysql \
+    /run/sshd && \
     # 创建 www 和 mysql 用户
     groupadd mysql && useradd -r -gmysql -M -s/bin/false mysql && \
     groupadd www && useradd -r -gwww -M -s/bin/false www && \
@@ -34,25 +34,39 @@ ARG PHP_VERSION="7.3.8"
 ARG NGINX_VERSION="1.16.1"
 ARG REDIS_VERSION="5.0.5"
 ARG MYSQL_VERSION="8.0.17"
+ARG PHP_REDIS_VERSION="5.0.2"
+ARG SWOOLE_VERSION="v4.4.4"
 
 # 下载并解压
 RUN wget https://nchc.dl.sourceforge.net/project/freetype/freetype2/${FREETYPE_VERSION}/freetype-${FREETYPE_VERSION}.tar.gz \
     -O /workspace/src/freetype-${FREETYPE_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/freetype-${FREETYPE_VERSION}.tar.gz -C /workspace/src && \
+    # 下载解压 PHP
     # wget https://www.php.net/distributions/php-${PHP_VERSION}.tar.gz && \
     wget https://mirrors.sohu.com/php/php-${PHP_VERSION}.tar.gz \
     -O /workspace/src/php-${PHP_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/php-${PHP_VERSION}.tar.gz -C /workspace/src && \
+    # 下载解压 Nginx
     wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
     -O /workspace/src/nginx-${NGINX_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/nginx-${NGINX_VERSION}.tar.gz -C /workspace/src && \
+    # 下载 Redis
     wget http://download.redis.io/releases/redis-${REDIS_VERSION}.tar.gz \
     -O /workspace/src/redis-${REDIS_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/redis-${REDIS_VERSION}.tar.gz -C /workspace/src && \
+    # 下载解压 MySQL
     wget https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-8.0/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz \
     -O /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz && \
     tar -xJvf /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz -C /workspace/src && \
-    mv /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64 /workspace/app/mysql
+    mv /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64 /workspace/app/mysql && \
+    # 下载解压 phpredis
+    wget https://github.com/phpredis/phpredis/archive/${PHP_REDIS_VERSION}.tar.gz \
+    -O /workspace/src/phpredis-${PHP_REDIS_VERSION}.tar.gz && \
+    tar xzvf /workspace/src/phpredis-${PHP_REDIS_VERSION}.tar.gz -C /workspace/src && \
+    # 下载解压 swoole
+    wget https://github.com/swoole/swoole-src/archive/${SWOOLE_VERSION}.gz \
+    -O /workspace/src/swoole-${SWOOLE_VERSION}.tar.gz && \
+    tar xzvf /workspace/src/swoole-${SWOOLE_VERSION}.tar.gz -C /workspace/src
 
 # 安装 freetype
 RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
@@ -141,6 +155,16 @@ RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
     /bin/ln -s /workspace/app/mysql/bin/mysql /usr/local/bin && \
     /bin/ln -s /workspace/app/mysql/bin/mysqld /usr/local/bin && \
     /bin/ln -s /workspace/app/mysql/bin/mysqldump /usr/local/bin && \
+    # 安装 phpredis
+    cd /workspace/src/phpredis-${PHP_REDIS_VERSION} && \
+    /usr/bin/phpize && \
+    ./configure \
+    && make && make install && \
+    # 安装 swoole
+    cd /workspace/src/swoole-${SWOOLE_VERSION} && \
+    /usr/bin/phpize && \
+    ./configure --enable-openssl --enable-sockets --enable-http2 --enable-mysqlnd && \
+    make && make install && \
     # 删除所有源文件
     rm -rf /workspace/src/* && \
     rm -rf /etc/mysql && \
@@ -148,11 +172,13 @@ RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
     apt-get autoclean
 
 # 复制配置文件
-COPY ./conf/* /workspace/etc/
+COPY ./conf/php /workspace/etc/php
+COPY ./conf/nginx /workspace/etc/nginx
+COPY ./conf/mysql /etc/mysql
+COPY ./conf/redis /workspace/etc/redis
 COPY ./supervisor /etc/supervisor/conf.d
-COPY ./www /workspace/www
 
-RUN chmod 644 /etc/my.cnf
+RUN chmod 644 /etc/mysql/my.cnf
 
 WORKDIR /root
 
