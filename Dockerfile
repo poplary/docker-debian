@@ -42,8 +42,7 @@ RUN wget https://nchc.dl.sourceforge.net/project/freetype/freetype2/${FREETYPE_V
     -O /workspace/src/freetype-${FREETYPE_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/freetype-${FREETYPE_VERSION}.tar.gz -C /workspace/src && \
     # 下载解压 PHP
-    # wget https://www.php.net/distributions/php-${PHP_VERSION}.tar.gz && \
-    wget https://mirrors.sohu.com/php/php-${PHP_VERSION}.tar.gz \
+    wget https://www.php.net/distributions/php-${PHP_VERSION}.tar.gz \
     -O /workspace/src/php-${PHP_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/php-${PHP_VERSION}.tar.gz -C /workspace/src && \
     # 下载解压 Nginx
@@ -55,7 +54,7 @@ RUN wget https://nchc.dl.sourceforge.net/project/freetype/freetype2/${FREETYPE_V
     -O /workspace/src/redis-${REDIS_VERSION}.tar.gz && \
     tar -xzvf /workspace/src/redis-${REDIS_VERSION}.tar.gz -C /workspace/src && \
     # 下载解压 MySQL
-    wget https://mirrors.tuna.tsinghua.edu.cn/mysql/downloads/MySQL-8.0/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz \
+    wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz \
     -O /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz && \
     tar -xJvf /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64.tar.xz -C /workspace/src && \
     mv /workspace/src/mysql-${MYSQL_VERSION}-linux-glibc2.12-x86_64 /workspace/app/mysql && \
