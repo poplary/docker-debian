@@ -176,8 +176,10 @@ COPY ./conf/nginx /workspace/etc/nginx
 COPY ./conf/mysql /etc/mysql
 COPY ./conf/redis /workspace/etc/redis
 COPY ./supervisor /etc/supervisor/conf.d
+COPY ./ssh/docker.hub /root/.ssh/authorized_keys
 
-RUN chmod 644 /etc/mysql/my.cnf
+RUN chmod 644 /etc/mysql/my.cnf && \
+    chmod 600 /root/.ssh/authorized_keys
 
 WORKDIR /root
 
