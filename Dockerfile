@@ -171,6 +171,7 @@ RUN cd /workspace/src/freetype-${FREETYPE_VERSION} && \
     apt-get autoclean
 
 # 复制配置文件
+RUN mkdir /root/.ssh
 COPY ./conf/php /workspace/etc/php
 COPY ./conf/nginx /workspace/etc/nginx
 COPY ./conf/mysql /etc/mysql
@@ -179,7 +180,7 @@ COPY ./supervisor /etc/supervisor/conf.d
 COPY ./ssh/docker.hub /root/.ssh/authorized_keys
 
 RUN chmod 644 /etc/mysql/my.cnf && \
-    chmod 600 /root/.ssh/authorized_keys
+    chmod -r 600 /root/.ssh
 
 WORKDIR /root
 
