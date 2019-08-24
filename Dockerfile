@@ -180,7 +180,7 @@ COPY ./supervisor /etc/supervisor/conf.d
 COPY ./ssh/docker.pub /root/.ssh/authorized_keys
 
 RUN chmod 644 /etc/mysql/my.cnf && \
-    chmod -r 600 /root/.ssh
+    chmod -R 600 /root/.ssh
 
 WORKDIR /root
 
